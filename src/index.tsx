@@ -4,7 +4,8 @@ import * as ReactDOM from "react-dom";
 import { Machine, assign, send, State } from "xstate";
 import { useMachine, asEffect } from "@xstate/react";
 import { inspect } from "@xstate/inspect";
-import { dmMachine } from "./dmColourChanger";
+// import { dmMachine } from "./dmAppointment";
+import { dmMainMachine } from "./main_machine";
 
 
 inspect({
@@ -20,8 +21,10 @@ const machine = Machine<SDSContext, any, SDSEvent>({
     type: 'parallel',
     states: {
         dm: {
-            ...dmMachine
+            // ...dmMachine
+            ...dmMainMachine
         },
+
         asrtts: {
             initial: 'idle',
             states: {
@@ -122,7 +125,7 @@ function App() {
         devTools: true,
         actions: {
             recStart: asEffect(() => {
-                console.log('Ready to receive a color command.');
+                console.log('Ready to receive an answer.');
                 listen({
                     interimResults: false,
                     continuous: true
@@ -164,8 +167,8 @@ function App() {
 /* RASA API
  *  */
 const proxyurl = "https://cors-anywhere.herokuapp.com/";
-const rasaurl = 'https://rasa-nlu-api-00.herokuapp.com/model/parse'
-const nluRequest = (text: string) =>
+const rasaurl = ''
+const nluRequest = (text: string) => 
     fetch(new Request(proxyurl + rasaurl, {
         method: 'POST',
         headers: { 'Origin': 'http://maraev.me' }, // only required with proxy
