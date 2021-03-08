@@ -1,5 +1,5 @@
 The default machine is set to be dmAppointmentPlus.ts,
-but you can comment it out and then comment in dmSmartHome.ts in the index.s file.
+but you can comment it out and then comment in dmSmartHome.ts in the index.ts file.
 
 
 
