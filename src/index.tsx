@@ -1,11 +1,12 @@
 import "./styles.scss";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Machine, assign, send, State } from "xstate";
+import { Machine, assign, State, actions } from "xstate";
 import { useMachine, asEffect } from "@xstate/react";
 import { inspect } from "@xstate/inspect";
-import { dmMachine } from "./dmColourChanger";
-
+// import { dmMachine } from "./dmSmartHome";
+import { dmMachine } from "./dmAppointmentPlus";
+const { send, cancel } = actions;
 
 inspect({
     url: "https://statecharts.io/inspect",
@@ -44,7 +45,10 @@ const machine = Machine<SDSContext, any, SDSEvent>({
                                 assign((_context, event) => { return { recResult: event.value } })],
                             target: '.match'
                         },
-                        RECOGNISED: 'idle'
+                        RECOGNISED: {
+                            target: 'idle', actions: [cancel('countdown'), assign((context) => { return { counts: 0 } })]
+                        },
+                        MAXSPEECH:'idle'
                     },
                     states: {
                         progress: {
@@ -125,7 +129,7 @@ function App() {
         devTools: true,
         actions: {
             recStart: asEffect(() => {
-                console.log('Ready to receive a color command.');
+                console.log('Ready to receive a command.');
                 listen({
                     interimResults: false,
                     continuous: true
