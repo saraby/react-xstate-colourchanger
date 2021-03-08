@@ -60,8 +60,7 @@ export const grammar =`
             <item>light</item>
             <item>heat</item>
             <item>air conditioning</item>
-            <item> A C <tag> out = 'air conditioning'; </tag></item>
-            <item> a c <tag> out = 'air conditioning'; </tag></item>
+            <item> AC <tag> out = 'air conditioning'; </tag></item>
         </one-of>
     </rule>
 </grammar>

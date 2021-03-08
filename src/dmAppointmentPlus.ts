@@ -67,7 +67,7 @@ function zeroTimeouts () : any {
     return {actions: assign((context: SDSContext) => { return { counts: 0 } }),
         cond: (context: SDSContext) => context.counts >= 3 }}
 
-function machineStates(prompt: Action<SDSContext, SDSEvent>, nomatch: string, timeoutReprompt: Action<SDSContext, SDSEvent> ): MachineConfig<SDSContext, any, SDSEvent> {
+function machineStates(prompt: Action<SDSContext, SDSEvent>, reprompt: Action<SDSContext, SDSEvent> ): MachineConfig<SDSContext, any, SDSEvent> {
     return ({
         initial: 'prompt',
         states: {
@@ -79,13 +79,8 @@ function machineStates(prompt: Action<SDSContext, SDSEvent>, nomatch: string, ti
                 entry: [send('LISTEN'), send('MAXSPEECH', {delay: 5000, id: "countdown"})]
             },
 
-            nomatch: {
-                entry: say(nomatch),
-                on: { ENDSPEECH: "ask" }
-            },
-
-            timeoutReprompt: {
-                entry: timeoutReprompt,
+            reprompt: {
+                entry: reprompt,
                 on: { ENDSPEECH: "ask" }
             },
 
@@ -127,14 +122,13 @@ export const dmMachine: MachineConfig<SDSContext, any, SDSEvent> = ({
                             {cond: (context) => "person" in (grammar[context.recResult] || {}),
                             actions: assign((context) => {return {person: grammar[context.recResult].person}}),
                             target: "day"},
-                            { target: ".nomatch"}],
+                            { target: ".reprompt"}],
                         
-                        MAXSPEECH:[{...maxTimeouts(), target: ".timeoutReprompt"},  
+                        MAXSPEECH:[{...maxTimeouts(), target: ".reprompt"},  
                                 {...zeroTimeouts(), target: ".finalReprompt"}]
 
                     },  
                     ...machineStates(say("Who are you meeting with?"),
-                    "Sorry I don't know them! Please choose who you're meeting with.",
                     say("You haven't responded yet! Would you please tell us, who you're meeting with?"))
                 },
                 day: {
@@ -144,16 +138,16 @@ export const dmMachine: MachineConfig<SDSContext, any, SDSEvent> = ({
                             {cond: (context) => "day" in (grammar[context.recResult] || {}),
                             actions: assign((context) => { return { day: grammar[context.recResult].day } }),
                             target: "whole_day"},
-                            { target: ".nomatch" }],
+                            {
+                                target: ".reprompt" }],
 
-                        MAXSPEECH: [{ ...maxTimeouts(), target: ".timeoutReprompt" },
+                        MAXSPEECH: [{ ...maxTimeouts(), target: ".reprompt" },
                         { ...zeroTimeouts(), target: ".finalReprompt" }]
                     },
 
                     ...machineStates(send((context) => ({
                         type: "SPEAK",
                         value: `OK. ${context.person}. On which day is your meeting?`})),
-                        "If you seek an appointment during the weekend, that's not possible. Please choose another day",
                         send((context) => ({
                             type: "SPEAK",
                             value: `You haven't responded yet! Now, please choose on which day you want to meet ${context.person}.`
@@ -174,13 +168,12 @@ export const dmMachine: MachineConfig<SDSContext, any, SDSEvent> = ({
                                 cond: (context) => yes_no_grammar[context.recResult] ? yes_no_grammar[context.recResult].yes_no === false : false,
                                 target: "time"
                             },
-                            { target: ".nomatch" }],
+                            { target: ".reprompt" }],
 
-                        MAXSPEECH: [{ ...maxTimeouts(), target: ".timeoutReprompt" },
+                        MAXSPEECH: [{ ...maxTimeouts(), target: ".reprompt" },
                         { ...zeroTimeouts(), target: ".finalReprompt" }]
                     },
                     ...machineStates(say("Will it take the whole day?"),
-                        "Sorry I don't understand what you said, Can you repeat?",
                         say("You haven't responded yet! Would you please confirm if your meeting is going to last for the whole day?") )
                 },
 
@@ -197,16 +190,16 @@ export const dmMachine: MachineConfig<SDSContext, any, SDSEvent> = ({
                                 cond: (context) => yes_no_grammar[context.recResult] ? yes_no_grammar[context.recResult].yes_no === false : false,
                                 target: "who"
                             },
-                            { target: ".nomatch" }],
+                            { target: ".reprompt" }],
 
-                        MAXSPEECH: [{ ...maxTimeouts(), target: ".timeoutReprompt" },
+                        MAXSPEECH: [{ ...maxTimeouts(), target: ".reprompt" },
                         { ...zeroTimeouts(), target: ".finalReprompt" }]
                     },
                     ...machineStates(send((context) => ({
                         type: "SPEAK",
                         value: `Do you want me to create an appointment with ${context.person} 
-                                            on ${context.day} for the whole day?`})),
-                        "Sorry I don't understand what you said, Can you repeat?", send((context) => ({
+                                    on ${context.day} for the whole day?`})),
+                         send((context) => ({
                             type: "SPEAK",
                             value: `"You haven't responded yet! Would you please confirm your appointment details?
                             I will create an appointment with ${context.person} on ${context.day} for the whole day, does that work for you?`
@@ -221,13 +214,13 @@ export const dmMachine: MachineConfig<SDSContext, any, SDSEvent> = ({
                             {cond: (context) => "time" in (grammar[context.recResult] || {}),
                             actions: assign((context) => { return { time: grammar[context.recResult].time } }),
                             target: "confirm_time_appointment"},
-                            { target: ".nomatch" }],
+                            {
+                                target: ".reprompt" }],
                         
-                        MAXSPEECH: [{ ...maxTimeouts(), target: ".timeoutReprompt" },
+                        MAXSPEECH: [{ ...maxTimeouts(), target: ".reprompt" },
                         { ...zeroTimeouts(), target: ".finalReprompt" }]
                     },
                     ...machineStates(say("What time is your meeting?"), 
-                    "Sorry the time you chose is not available. Please choose a different time!",
                         say("What time is your meeting?"))
 
                    
@@ -246,18 +239,17 @@ export const dmMachine: MachineConfig<SDSContext, any, SDSEvent> = ({
                                 cond: (context) => yes_no_grammar[context.recResult] ? yes_no_grammar[context.recResult].yes_no === false : false,
                                 target: "who"
                             },
-                            { target: ".nomatch" }],
+                            { target: ".reprompt" }],
                         
-                        MAXSPEECH: [{ ...maxTimeouts(), target: ".timeoutReprompt" },
+                        MAXSPEECH: [{ ...maxTimeouts(), target: ".reprompt" },
                         { ...zeroTimeouts(), target: ".finalReprompt" }]
-
                     },
 
                     ...machineStates(send((context) => ({
                         type: "SPEAK",
                         value: `Do you want me to create an appointment with ${context.person} 
                                             on ${context.day} at ${context.time}?`})),
-                        "Sorry I don't understand what you said, Can you repeat?", send((context) => ({
+                         send((context) => ({
                             type: "SPEAK",
                             value: `"You haven't responded yet! Would you please confirm your appointment details?
                             I will create an appointment with ${context.person} on ${context.day} at ${context.time}, does that work for you?`
