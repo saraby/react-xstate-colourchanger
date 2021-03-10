@@ -92,6 +92,7 @@ export const dmMachine: MachineConfig<SDSContext, any, SDSEvent> = ({
                  
             },
             ...promptAndAsk("Hello, Welcome to your new smart home system. How can I help you?")
+            
         },
 
         analyse: {
@@ -128,7 +129,7 @@ export const dmMachine: MachineConfig<SDSContext, any, SDSEvent> = ({
                 },
                 nomatch: {
                     entry: say("Sorry I don't understand what you said, Can you repeat?"),
-                    on: { ENDSPEECH: "ask" }
+                    on: { ENDSPEECH: "#root.dm.welcome.ask" }
                 }
             }
         },
