@@ -41,6 +41,10 @@ function promptAndAsk(prompt: string): MachineConfig<SDSContext, any, SDSEvent> 
             ask: {
                 entry: send('LISTEN'),
             },
+            new_task: {
+                entry: say("Great! What do you want me to do?"),
+                on: { ENDSPEECH: 'ask' }
+            }
         }
     })
 }
@@ -114,7 +118,7 @@ export const dmMachine: MachineConfig<SDSContext, any, SDSEvent> = ({
             on: {
                 RECOGNISED: [
                     {cond: (context) => yes_no_grammar[context.recResult] ? yes_no_grammar[context.recResult].yes_no === true : false,
-                        target: "welcome"},
+                        target: "welcome.new_task"},
                     {cond: (context) => yes_no_grammar[context.recResult] ? yes_no_grammar[context.recResult].yes_no === false : false,
                         target: "final"},
                     { target: ".nomatch" }]
