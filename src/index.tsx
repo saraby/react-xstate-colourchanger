@@ -1,20 +1,44 @@
 import "./styles.scss";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+<<<<<<< Updated upstream
 import { Machine, assign, State, actions } from "xstate";
 import { useMachine, asEffect } from "@xstate/react";
 import { inspect } from "@xstate/inspect";
 // import { dmMachine } from "./dmSmartHome";
 import { dmMachine } from "./dmAppointmentPlus";
 const { send, cancel } = actions;
+=======
+import { Machine, assign, Action, State, actions } from "xstate";
+import { useMachine, asEffect } from "@xstate/react";
+import { inspect } from "@xstate/inspect";
+import { dmMachine } from "./dmProject";
+const { send, cancel } = actions;
+import { GameUI } from './GameUI'
+import { useSpeechSynthesis, useSpeechRecognition } from 'react-speech-kit';
+
+>>>>>>> Stashed changes
 
 inspect({
     url: "https://statecharts.io/inspect",
     iframe: false
 });
 
-import { useSpeechSynthesis, useSpeechRecognition } from 'react-speech-kit';
+type GameProps = {
+    gameStage: string
+}
+type GameState = {
+    gameStage: string
+}
 
+
+// export function say(text: string): Action<SDSContext, SDSEvent> {
+//     return send((_context: SDSContext) => ({ type: "SPEAK", value: text }))
+// }
+
+// export function listen(): Action<SDSContext, SDSEvent> {
+//     return send('LISTEN')
+// }
 
 const machine = Machine<SDSContext, any, SDSEvent>({
     id: 'root',
@@ -46,9 +70,15 @@ const machine = Machine<SDSContext, any, SDSEvent>({
                             target: '.match'
                         },
                         RECOGNISED: {
+<<<<<<< Updated upstream
                             target: 'idle', actions: [cancel('countdown'), assign((context) => { return { counts: 0 } })]
                         },
                         MAXSPEECH:'idle'
+=======
+                            target: 'idle', actions: cancel('countdown')
+                        },
+                        MAXSPEECH: 'idle'
+>>>>>>> Stashed changes
                     },
                     states: {
                         progress: {
@@ -114,6 +144,8 @@ const ReactiveButton = (props: Props): JSX.Element => {
     }
 }
 
+
+
 function App() {
     const { speak, cancel, speaking } = useSpeechSynthesis({
         onEnd: () => {
@@ -135,6 +167,22 @@ function App() {
                     continuous: true
                 });
             }),
+            magicWord: asEffect(() => {
+                //DOM (Document Object Model)
+                var fireworks = document.getElementById('fw');
+                if(fireworks!=null){
+                    console.log("displaying fireworks!");
+                    fireworks.style.display = "block";
+                }
+            }),
+            stopMagic: asEffect(() => {
+                //DOM (Document Object Model)
+                var fireworks = document.getElementById('fw');
+                if(fireworks!=null){
+                    console.log("hiding fireworks!");
+                    fireworks.style.display = "none";
+                }
+            }),
             recStop: asEffect(() => {
                 console.log('Recognition stopped.');
                 stop()
@@ -145,6 +193,7 @@ function App() {
             }),
             ttsStart: asEffect((context, effect) => {
                 console.log('Speaking...');
+                console.log('<< ASR: ' + context.words)
                 speak({ text: context.ttsAgenda })
             }),
             ttsCancel: asEffect((context, effect) => {
@@ -152,7 +201,7 @@ function App() {
                 cancel()
             })
             /* speak: asEffect((context) => {
-	     * console.log('Speaking...');
+         * console.log('Speaking...');
              *     speak({text: context.ttsAgenda })
              * } */
         }
@@ -162,6 +211,15 @@ function App() {
     return (
         <div className="App">
             <ReactiveButton state={current} onClick={() => send('CLICK')} />
+           
+
+                <div className="game-ui">
+                    <GameUI></GameUI>
+                </div>
+                <div id="fw" className="pyro">
+                <div className="before"></div>
+                <div className="after"></div>
+            </div>
         </div>
     )
 };

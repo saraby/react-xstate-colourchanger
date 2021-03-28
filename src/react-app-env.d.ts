@@ -9,6 +9,7 @@ interface SDSContext {
     day: string;
     nluData: any;
     ttsAgenda: string;
+<<<<<<< Updated upstream
     yes_no: boolean,
     query: string;
     output: string;
@@ -17,6 +18,15 @@ interface SDSContext {
     object: string;
     counts: number
 
+=======
+    query: string;
+    output: string;
+    help: string;
+    words: string[];
+    list: string[];
+    temp: string[];
+    counts: number
+>>>>>>> Stashed changes
 }
 
 type SDSEvent =

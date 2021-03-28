@@ -1,50 +1,123 @@
+html,
+body,
+.div {
+}
+#root {
+  min-height: 100%;
+  min-width: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  background: #212121;
+}
 .App {
-  font-family: sans-serif;
+  background-image: url(./imgs/background_image.jpeg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 40px;
+  font-style: italic ;
   text-align: center;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    background: #000;
-  
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  min-width: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color:rgb(163, 110, 184);
+  z-index: -1;
+}
+.h1 {
+  padding-top: 16vh;
+  // color: rgb(0, 0, 0);
+  color:rgb(47, 7, 61);
+  border: 2;
+  outline:2;
+  text-shadow: 2px 2px #fffdfd;
+}
+
+.h2 {
+  padding-top: 0vh;
+  font-size: 40px;
+  color: rgb(251, 251, 253);
+  border: 2;
+  outline: 2;
+  text-shadow: 3px 2px #212121;
 }
 
 .glow-on-hover {
-    width: 220px;
-    height: 50px;
-    cursor: pointer;
-    position: relative;
-    z-index: 0;
-    border-radius: 10px;
-    content: '';
-    background: linear-gradient(45deg,  #002bff, #7a00ff, #ff00c8, #ff0000, #ff7300, #ff00c8, #7a00ff, #002bff,);
-    top: -2px;
-    left:-2px;
-    background-size: 400%;
-    opacity: 1;
-    color: #fff;
-    font-size: 2rem;
-    border: none;
-    outline: none;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  width: 220px;
+  height: 50px;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 50px;
+  content: "";
+  background: linear-gradient(45deg, #002bff, #7a00ff, #ff00c8,
+   #ff0000, #ff7300, #ff00c8, #7a00ff, #002bff, );
+  top: 150px;
+  left: -2px;
+  background-size: 400%;
+  opacity: 1;
+  color: rgb(255, 255, 255);
+  font-size: 2rem;
+  border: 0;
+  outline: 0;
 }
 
+.game-ui {
+  flex: 19;
+  min-width: 100%;
+  max-width: 100%;
+  padding-top: 5vh;
+  color: #fff;
+}
+
+.info-bar {
+  background-color: #484848;
+  width: 100%;
+  flex: 3;
+}
 
 @keyframes glowing {
-    0% { background-position: 0 0; }
-    50% { background-position: 400% 0; }
-    100% { background-position: 0 0; }
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
 }
 
 @keyframes bordering {
-  0% { box-shadow: 0 0 -40px #c4a300; }
-  40% { box-shadow: 0 0 40px #c4a300; }
-  60% { box-shadow: 0 0 40px #c4a300; }
-  100% { box-shadow: 0 0 -40px #c4a300; }
+  0% {
+    box-shadow: 0 0 -40px #c4a300;
+  }
+  40% {
+    box-shadow: 0 0 40px hsl(41, 96%, 18%);
+  }
+  60% {
+    box-shadow: 0 0 40px #c4a300;
+  }
+  100% {
+    box-shadow: 0 0 -40px hsl(49, 98%, 16%);
+  }
+}
+
+img {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 20vw;
 }
 
 [data-xstate] {
@@ -52,3 +125,155 @@
   align-self: stretch;
   border: none;
 }
+//here
+$particles: 50;
+$width: 500;
+$height: 500;
+
+// Create the explosion...
+$box-shadow: ();
+$box-shadow2: ();
+@for $i from 0 through $particles {
+  $box-shadow: $box-shadow,
+               random($width)-$width / 2 + px
+               random($height)-$height / 1.2 + px
+               hsl(random(360), 100, 50);
+  $box-shadow2: $box-shadow2, 2 2 #fff
+}
+@mixin keyframes ($animationName) {
+    @-webkit-keyframes #{$animationName} {
+        @content;
+    }
+
+    @-moz-keyframes #{$animationName} {
+        @content;
+    }
+
+    @-o-keyframes #{$animationName} {
+        @content;
+    }
+
+    @-ms-keyframes #{$animationName} {
+        @content;
+    }
+
+    @keyframes #{$animationName} {
+        @content;
+    }
+}
+
+@mixin animation-delay ($settings) {
+    -moz-animation-delay: $settings;
+    -webkit-animation-delay: $settings;
+    -o-animation-delay: $settings;
+    -ms-animation-delay: $settings;
+    animation-delay: $settings;
+}
+
+@mixin animation-duration ($settings) {
+    -moz-animation-duration: $settings;
+    -webkit-animation-duration: $settings;
+    -o-animation-duration: $settings;
+    -ms-animation-duration: $settings;
+    animation-duration: $settings;
+}
+
+@mixin animation ($settings) {
+    -moz-animation: $settings;
+    -webkit-animation: $settings;
+    -o-animation: $settings;
+    -ms-animation: $settings;
+    animation: $settings;
+}
+
+@mixin transform ($settings) {
+    transform: $settings;
+    -moz-transform: $settings;
+    -webkit-transform: $settings;
+    -o-transform: $settings;
+    -ms-transform: $settings;
+}
+
+body {
+  margin:0;
+  padding:0;
+  background: rgba(0, 0, 0, 0);
+  overflow: hidden;
+}
+
+.pyro {
+  display: none;
+  position: absolute;
+  top: 450px;
+  z-index : 2;
+}
+
+.pyro > .before, .pyro > .after {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  box-shadow: $box-shadow2;
+  @include animation((1s bang ease-out infinite backwards, 1s gravity ease-in infinite backwards, 5s position linear infinite backwards));
+}
+    
+.pyro > .after {
+  @include animation-delay((1.25s, 1.25s, 1.25s));
+  @include animation-duration((1.25s, 1.25s, 6.25s));
+}
+        
+@include keyframes(bang) {
+  to {
+    box-shadow:$box-shadow;
+  }
+}
+    
+@include keyframes(gravity)  {
+  to {
+    @include transform(translateY(200px));
+    opacity: 0;
+  }
+}
+    
+@include keyframes(position) {
+  0%, 19.9% {
+    margin-top: 10%;
+    margin-left: 40%;
+  }
+  20%, 39.9% {
+    margin-top: 40%;
+    margin-left: 30%;
+  }
+  40%, 59.9% {  
+    margin-top: 20%;
+    margin-left: 70%
+  }
+  60%, 79.9% {  
+    margin-top: 30%;
+    margin-left: 20%;
+  }
+  80%, 99.9% {  
+    margin-top: 30%;
+    margin-left: 80%;
+  }
+}
+
+
+// .category-panel {
+//   display: flex;
+//   flex-direction: row;
+//   min-width: 100%;
+//   max-width: 100%;
+//   height: 50vh;
+// }
+
+// .category-card {
+//   margin: 1vh;
+//   padding: 5px;
+//   padding-top: 10px;
+//   flex: 1;
+//   height: 100%;
+//   min-height: 100%;
+//   max-height: 100%;
+//   background-color: #484848;
+// }
